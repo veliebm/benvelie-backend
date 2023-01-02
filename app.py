@@ -1,20 +1,29 @@
 from flask import Flask, request
-import sqlite3
+from flask_sqlalchemy import SQLAlchemy
 import json
 
 
 MAX_CLICK_RATE = 16
-DATABASE_PATH = "totals.db"
 
-
-with sqlite3.connect("totals.db") as connection:
-    for query in [
-        "CREATE TABLE IF NOT EXISTS totals (id INTEGER PRIMARY KEY, click_count INTEGER NOT NULL DEFAULT 0, observation_time INTEGER NOT NULL DEFAULT 0);",
-        "INSERT OR IGNORE INTO totals VALUES(1,0,0);",
-    ]:
-        connection.execute(query)
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///totals.db"
+
+database = SQLAlchemy(app)
+
+
+class Totals(database.Model):
+    id = database.Column(database.Integer, primary_key=True)
+    click_count = database.Column(database.Integer)
+    observation_time = database.Column(database.Integer)
+
+
+with app.app_context():
+    database.create_all()
+    totals_already_exist = database.session.query(Totals).filter(Totals.id == 1).first()
+    if not totals_already_exist:
+        database.session.add(Totals(id=1, click_count=0, observation_time=0))
+        database.session.commit()
 
 
 @app.route("/")
@@ -30,15 +39,14 @@ def get_totals():
         else MAX_CLICK_RATE
     )
 
-    with sqlite3.connect(DATABASE_PATH) as connection:
-        cursor = connection.cursor()
-        cursor.execute(
-            f"UPDATE totals SET click_count = click_count + {incoming_click_count}, observation_time = observation_time + 1 WHERE id = 1;"
-        )
-        cursor.execute("SELECT click_count, observation_time FROM totals WHERE id = 1;")
-        click_count, observation_time = cursor.fetchone()
-        cursor.close()
+    current_totals = Totals.query.all()[0]
+    current_totals.click_count += incoming_click_count
+    current_totals.observation_time += 1
+    database.session.commit()
 
     return json.dumps(
-        {"click_count": click_count, "observation_time": observation_time}
+        {
+            "click_count": current_totals.click_count,
+            "observation_time": current_totals.observation_time,
+        }
     )
