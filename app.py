@@ -39,6 +39,9 @@ def get_totals():
         else MAX_CLICK_RATE
     )
 
+    if incoming_click_count < 0:
+        return "Click count can never be less than 0.", 400
+
     current_totals = Totals.query.all()[0]
     current_totals.click_count += incoming_click_count
     current_totals.observation_time += 1
