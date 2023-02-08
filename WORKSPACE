@@ -1,5 +1,9 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+##########################################################
+# Create Python toolchain
+##########################################################
+
 http_archive(
     name = "rules_python",
     sha256 = "497ca47374f48c8b067d786b512ac10a276211810f4a580178ee9b9ad139323a",
@@ -15,6 +19,10 @@ python_register_toolchains(
     # We recommend using the same version your team is already standardized on.
     python_version = "3.9",
 )
+
+##########################################################
+# Enable downloading pip dependencies
+##########################################################
 
 load("@rules_python//python:pip.bzl", "pip_parse")
 
