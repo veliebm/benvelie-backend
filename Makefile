@@ -8,4 +8,4 @@ run_dev_server:
 	flask --app app --debug run
 
 run_prod_server:
-	exec gunicorn --reload app:app --bind 0.0.0.0:8000 --
+	exec gunicorn --reload app:app --bind 0.0.0.0:8000
