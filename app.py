@@ -53,7 +53,3 @@ def get_totals():
             "observation_time": current_totals.observation_time,
         }
     )
-
-
-if __name__ == "__main__":
-    app.run()
