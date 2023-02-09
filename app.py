@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 import json
+import flask_cors
 
 
 MAX_CLICK_RATE = 16
@@ -8,6 +9,7 @@ MAX_CLICK_RATE = 16
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///totals.db"
+flask_cors.CORS(app)
 
 database = SQLAlchemy(app)
 
