@@ -1,5 +1,9 @@
 FROM python:3.11
 
-COPY requirements.txt requirements.txt
+COPY . .
 
 RUN pip install -r requirements.txt
+
+ENTRYPOINT [ "python" ]
+
+CMD ["app.py"]
