@@ -2,15 +2,12 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 import json
 import flask_cors
+import os
 
 
 MAX_CLICK_RATE = 16
-
-
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///totals.db"
-flask_cors.CORS(app)
-
 database = SQLAlchemy(app)
 
 
@@ -20,12 +17,19 @@ class Totals(database.Model):
     observation_time = database.Column(database.Integer)
 
 
-with app.app_context():
-    database.create_all()
-    totals_already_exist = database.session.query(Totals).filter(Totals.id == 1).first()
-    if not totals_already_exist:
-        database.session.add(Totals(id=1, click_count=0, observation_time=0))
-        database.session.commit()
+def main():
+    flask_cors.CORS(app)
+    with app.app_context():
+        database.create_all()
+        totals_already_exist = (
+            database.session.query(Totals).filter(Totals.id == 1).first()
+        )
+        if not totals_already_exist:
+            database.session.add(Totals(id=1, click_count=0, observation_time=0))
+            database.session.commit()
+
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
 
 
 @app.route("/")
@@ -55,3 +59,6 @@ def get_totals():
             "observation_time": current_totals.observation_time,
         }
     )
+
+if __name__ == "__main__":
+    main()
