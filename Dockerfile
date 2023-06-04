@@ -4,4 +4,4 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT flask --app app run --host=0.0.0.0
+ENTRYPOINT flask --app src/app run --host=0.0.0.0
