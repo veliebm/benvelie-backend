@@ -26,6 +26,15 @@ def test_home_route_tells_user_off(client):
     assert b"seeing" in rv.data
 
 
+def test_get_totals_should_return_incremented_click_count(client):
+    rv1 = client.get("/totals?click_count=0")
+    rv2 = client.get("/totals?click_count=10")
+
+    assert (
+        json.loads(rv2.data)["click_count"] - json.loads(rv1.data)["click_count"] == 10
+    )
+
+
 def test_get_totals_observation_time_should_increment_by_one_each_request(client):
     rv1 = client.get("/totals?click_count=0")
     rv2 = client.get("/totals?click_count=0")
