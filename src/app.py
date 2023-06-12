@@ -28,8 +28,8 @@ def main():
             database.session.add(Totals(id=1, click_count=0, observation_time=0))
             database.session.commit()
 
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
 
 
 @app.route("/")
@@ -59,6 +59,7 @@ def get_totals():
             "observation_time": current_totals.observation_time,
         }
     )
+
 
 if __name__ == "__main__":
     main()
