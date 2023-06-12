@@ -37,8 +37,8 @@ def home():
     return "you're probably not supposed to be seeing this page 🧐"
 
 
-@app.route("/totals")
-def get_totals():
+@app.route("/totals", methods=["POST"])
+def update_totals():
     incoming_click_count = (
         int(request.args["click_count"])
         if int(request.args["click_count"]) <= MAX_CLICK_RATE
@@ -53,6 +53,17 @@ def get_totals():
     current_totals.observation_time += 1
     database.session.commit()
 
+    return json.dumps(
+        {
+            "click_count": current_totals.click_count,
+            "observation_time": current_totals.observation_time,
+        }
+    )
+
+
+@app.route("/totals")
+def get_totals():
+    current_totals = Totals.query.all()[0]
     return json.dumps(
         {
             "click_count": current_totals.click_count,
