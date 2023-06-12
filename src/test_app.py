@@ -3,8 +3,6 @@ import app
 import pytest
 from app import app, Totals, MAX_CLICK_RATE, database
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test_totals.db"
-
 
 @pytest.fixture
 def client():
