@@ -8,7 +8,7 @@ def client():
         yield client
 
 
-def test_home_route_tells_user_off(client):
+def test_ping(client):
     return_value = client.get("/ping")
 
     assert b"pong" in return_value.data
